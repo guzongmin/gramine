@@ -105,7 +105,7 @@ static void do_parent(void) {
     struct pal_socket_addr addr = {
         .domain = IPV4,
         .ipv4 = {
-            .addr = 0x0100007f, // localhost in big (network) endian
+            .addr = __htonl(0x7f000001), // localhost
             .port = __htons(PORT),
         },
     };
@@ -125,7 +125,8 @@ static void do_parent(void) {
     addr = (struct pal_socket_addr) {
         .domain = IPV6,
         .ipv6 = {
-            .addr = { [15] = 1 }, // localhost
+            // FIXME: our jenkins is broken and doesn't have ipv6 on lo?? try binding to all...
+            // .addr = { [15] = 1 }, // localhost
             .port = __htons(PORT),
         },
     };
