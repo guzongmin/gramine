@@ -475,24 +475,11 @@ class TC_21_ProcessCreation(RegressionTestCase):
         self.assertEqual(counter['Process Write 2 OK'], 3)
         self.assertEqual(counter['Process Read 2: Hello World 2'], 3)
 
-# TODO: rewrite
-#class TC_23_SendHandle(RegressionTestCase):
-#    def test_000_send_handle(self):
-#        _, stderr = self.run_binary(['SendHandle'])
-#        counter = collections.Counter(stderr.split('\n'))
-#
-#        # Send and Receive Handles across Processes
-#        self.assertEqual(counter['Send Handle OK'], 3)
-#        self.assertEqual(counter['Receive Handle OK'], 3)
-#
-#        # Send Pipe Handle
-#        self.assertEqual(counter['Receive Pipe Handle: Hello World'], 1)
-#
-#        # Send Socket Handle
-#        self.assertEqual(counter['Receive Socket Handle: Hello World'], 1)
-#
-#        # Send File Handle
-#        self.assertEqual(counter['Receive File Handle: Hello World'], 1)
+class TC_23_SendHandle(RegressionTestCase):
+    def test_000_send_handle(self):
+        _, stderr = self.run_binary(['send_handle'])
+        self.assertIn('Parent: test OK', stderr)
+        self.assertIn('Child: test OK', stderr)
 
 @unittest.skipUnless(HAS_SGX, 'This test is only meaningful on SGX PAL')
 class TC_50_Attestation(RegressionTestCase):

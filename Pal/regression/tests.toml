@@ -19,12 +19,12 @@ manifests = [
   "Pipe",
   "Process",
   "Process4",
-  "SendHandle",
   "Symbols",
   "Thread2",
   "Thread2_exitless",
   "normalize_path",
   "printf_test",
+  "send_handle",
 ]
 
 [arch.x86_64]

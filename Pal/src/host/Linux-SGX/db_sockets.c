@@ -247,14 +247,17 @@ static int tcp_accept(PAL_HANDLE handle, pal_stream_options_t options, PAL_HANDL
         return -PAL_ERROR_NOMEM;
     }
 
-    int ret = verify_ip_addr(client->sock.domain, &sa_storage, linux_addrlen);
-    if (ret < 0) {
-        _DkObjectClose(client);
-        return ret;
+    if (client_addr) {
+        int ret = verify_ip_addr(client->sock.domain, &sa_storage, linux_addrlen);
+        if (ret < 0) {
+            _DkObjectClose(client);
+            return ret;
+        }
+
+        linux_to_pal_sockaddr(&sa_storage, client_addr);
+        assert(client_addr->domain == client->sock.domain);
     }
 
-    linux_to_pal_sockaddr(&sa_storage, client_addr);
-    assert(client_addr->domain == client->sock.domain);
     *client_ptr = client;
     return 0;
 }
@@ -455,16 +458,13 @@ static int attrsetbyhdl_udp(PAL_HANDLE handle, PAL_STREAM_ATTR* attr) {
 static int send(PAL_HANDLE handle, struct pal_iovec* pal_iov, size_t iov_len, size_t* size_out,
                 struct pal_socket_addr* addr) {
     assert(PAL_GET_TYPE(handle) == PAL_TYPE_SOCKET);
-    if (addr && addr->domain != handle->sock.domain) {
-        return -PAL_ERROR_INVAL;
-    }
-    if (handle->sock.ops == &g_udp_sock_ops && !addr) {
-        return -PAL_ERROR_INVAL;
-    }
 
     struct sockaddr_storage sa_storage;
     size_t linux_addrlen = 0;
     if (addr) {
+        if (addr->domain != handle->sock.domain) {
+            return -PAL_ERROR_INVAL;
+        }
         pal_to_linux_sockaddr(addr, &sa_storage, &linux_addrlen);
         assert(linux_addrlen <= INT_MAX);
     }
