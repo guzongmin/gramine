@@ -31,6 +31,8 @@ static int unix_to_pal_error_positive(int unix_errno) {
         case EEXIST:
         case EADDRINUSE:
             return PAL_ERROR_STREAMEXIST;
+        case EADDRNOTAVAIL:
+            return PAL_ERROR_ADDRNOTEXIST;
         case ENOTDIR:
             return PAL_ERROR_STREAMISFILE;
         case EINVAL:
